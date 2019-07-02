@@ -53,7 +53,7 @@ which produce instead something similar to; ran on firefox which seem to have a 
 Who is misbehaving?
 I tried some env, and looks like the best is chrome browser, all other env i could test have shown the expanding time to some extent.
 
-### Some options
+### Some optionzzzz
 the `interval` function returns n instance of a simple object where the following methods are available:
 - **run()**  
     to start it
