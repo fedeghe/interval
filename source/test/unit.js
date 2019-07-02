@@ -45,7 +45,7 @@ describe('basic operations', () => {
             i++;
             if (i === 10) throw new Error('Error')
         }, 10, function (e) {
-            assert.equal(typeof e === 'error');
+            assert.equal(e instanceof Error);
             done();
         })
     });
