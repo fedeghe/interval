@@ -13,6 +13,7 @@
     "author": "fedeghe <fedeghe@gmail.com>",
     "license": "MIT",
     "devDependencies": {
+        "coveralls": "^3.0.4",
         "malta": "^3.9.16",
         "malta-header-comment": "^1.0.5",
         "malta-js-uglify": "^1.0.5",
