@@ -5,14 +5,12 @@
 A really simple function to provide a better timing to replace the `setInterval`
 
 ```
-var clear = interval(function () {
+var intr = interval(function () {
     console.log(+new Date)
-}, 100 , function(e){
-    console.log('Ouch: ', e)
-});
+}, 100).run()
 
 // shut down after 1 second
-setTimeout(clear, 1000);
+setTimeout(intr.clear, 1000);
 ```
 
 will produce
@@ -54,3 +52,18 @@ which produce instead something similar to; ran on firefox which seem to have a 
 ```
 Who is misbehaving?
 I tried some env, and looks like the best is chrome browser, all other env i could test have shown the expanding time to some extent.
+
+### Some options
+the `interval` function returns n instance of a simple object where the following methods are available:
+- **run()**  
+    to start it
+- **clear()**  
+    to stop it
+- **onErr(fn)**  
+    to pass a function that will handle any thrown err
+- **onEnd(fn)**  
+    to pass a function that will be called when `clear` will be called  
+- **pause()**
+- **resume()**
+
+
