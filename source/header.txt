@@ -1,2 +1,3 @@
-Interval
+Interval v$PACKAGE.version$
 $PACKAGE.author$
+$PACKAGE.description$

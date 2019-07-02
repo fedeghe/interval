@@ -7,7 +7,9 @@ A really simple function to provide a better timing to replace the `setInterval`
 ```
 var clear = interval(function () {
     console.log(+new Date)
-}, 100);
+}, 100 , function(e){
+    console.log('Ouch: ', e)
+});
 
 // shut down after 1 second
 setTimeout(clear, 1000);
