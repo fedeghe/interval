@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)
+[![Build Status](https://travis-ci.org/fedeghe/interval.svg?branch=master)](https://travis-ci.org/fedeghe/interval)
 # interval
 
 A really simple function to provide a better timing to replace the `setInterval`
