@@ -39,4 +39,14 @@ describe('basic operations', () => {
             }
         }, 10000);
     });
+    it('should throw an exception, and handle it', (done) => {
+        var i = 0;
+        var c1 = interval(function () {
+            i++;
+            if (i === 10) throw new Error('Error')
+        }, 10, function (e) {
+            assert.equal(typeof e === 'error');
+            done();
+        })
+    });
 });
