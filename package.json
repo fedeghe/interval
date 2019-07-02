@@ -1,22 +1,23 @@
 {
-  "name": "interval",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "malta source/build.json",
-    "test": "mocha",
-    "cover": "nyc npm test && nyc report --reporter=html ",
-    "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
-  },
-  "repository": "git@github.com:fedeghe/interval.git",
-  "author": "fedeghe <fedeghe@gmail.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "malta": "^3.9.16",
-    "malta-header-comment": "^1.0.5",
-    "malta-js-uglify": "^1.0.5",
-    "mocha": "^6.1.4",
-    "mocha-lcov-reporter": "^1.3.0",
-    "nyc": "^14.1.1"
-  }
+    "name": "interval",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "malta source/build.json",
+        "buildtr": "malta source/buildtr.json",
+        "test": "mocha",
+        "cover": "nyc npm test && nyc report --reporter=html ",
+        "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
+    },
+    "repository": "git@github.com:fedeghe/interval.git",
+    "author": "fedeghe <fedeghe@gmail.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "malta": "^3.9.16",
+        "malta-header-comment": "^1.0.5",
+        "malta-js-uglify": "^1.0.5",
+        "mocha": "^6.1.4",
+        "mocha-lcov-reporter": "^1.3.0",
+        "nyc": "^14.1.1"
+    }
 }
