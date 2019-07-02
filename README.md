@@ -1,6 +1,6 @@
 # interval
 
-A really simple function to provide a better timing function to replace the `setInterval`
+A really simple function to provide a better timing to replace the `setInterval`
 
 ```
 var clear = interval(function () {
