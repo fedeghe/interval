@@ -1,5 +1,5 @@
 {
-    "name": "interval",
+    "name": "@fedeghe/interval",
     "version": "1.0.0",
     "description": "A really simple function to provide a better timing to replace the setInterval",
     "main": "dist/index.js",
