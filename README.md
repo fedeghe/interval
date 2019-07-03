@@ -10,7 +10,9 @@ var intr = interval(function () {
 }, 100).run()
 
 // shut down after 1 second
-setTimeout(intr.clear, 1000);
+setTimeout(function () {
+    intr.clear();
+}, 1000);
 ```
 
 will produce
