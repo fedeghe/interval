@@ -54,7 +54,7 @@ Who is misbehaving?
 I tried some env, and looks like the best is chrome browser, all other env i could test have shown the expanding time to some extent.
 
 ### Some optionzzzz
-the `interval` function returns n instance of a simple object where the following methods are available:
+the `interval` function returns an instance of a simple object where the following methods are available:
 - **run()**  
     to start it
 - **clear()**  

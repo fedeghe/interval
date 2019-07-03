@@ -3,6 +3,10 @@
     "version": "1.0.1",
     "description": "A really simple function to provide a better timing to replace the setInterval",
     "main": "dist/index.js",
+    "keywords": [
+        "interval",
+        "better setInterval"
+    ],
     "scripts": {
         "build": "malta source/build.json",
         "buildtr": "malta source/buildtr.json",
