@@ -3,6 +3,6 @@
         "rm -rf dist test",
         "mkdir dist test"
     ],
-    "source/index.js": "dist -plugins=malta-js-uglify...malta-header-comment[name:\"source/header.txt\"]",
-    "source/test/unit.js": "test"
+    "#source/index.js": "dist -plugins=malta-js-uglify...malta-header-comment[name:\"source/header.txt\"]",
+    "#source/test/unit.js": "test"
 }
