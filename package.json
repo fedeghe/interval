@@ -12,6 +12,7 @@
         "build": "malta source/build.json",
         "test": "mocha",
         "lint": "eslint source",
+        "compare": "node compare/test.js",
         "cover": "nyc npm test && nyc report --reporter=html ",
         "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
     },

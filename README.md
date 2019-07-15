@@ -52,20 +52,30 @@ which produce instead something similar to; ran on firefox which seem to have a 
 1562049640884 // " 15
 1562049640988 // " 19
 ```
-Who is misbehaving?
-I tried some env, and looks like the best is chrome browser, all other env i could test have shown the expanding time to some extent.
-
-### Some optionzzzz
+### _API_
 the `interval` function returns an instance of a simple object where the following methods are available:
-- **run()**  
-    to start it
-- **clear()**  
-    to stop it
-- **onErr(fn)**  
-    to pass a function that will handle any thrown err
-- **onEnd(fn)**  
-    to pass a function that will be called when `clear` will be called  
+- **run()** to start it
+- **clear()** to stop it
+- **onErr(fn)** to pass a function that will handle any thrown err
+- **onEnd(fn)** to pass a function that will be called when `clear` will be called  
 - **pause()**
 - **resume()**
+
+### Who is misbehaving?  
+I tried some env, and looks like the best is chrome browser, all other env i could test have shown the expanding time to some extent.  
+
+Just to summarize a bit, a metric of how bad the setInterval behave could be the first iteration that overlaps. 
+Using an interval of 100ms for example the incident occurs only at the 30th iteration:
+![malta logo](https://raw.githubusercontent.com/fedeghe/interval/master/compare/100.png)  
+you can try it by yoursef in your env simply running:  
+```
+yarn compare 200 // for example, or passing any integer interval in ms
+                 // ...you have to stop it manually (+c)
+```
+
+... as You can see, **even this time**, _the wheel's sentence is the biggest trap our mind can fall into <sub>(me)</sub>_.
+
+
+
 
 
