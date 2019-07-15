@@ -65,7 +65,7 @@ the `interval` function returns an instance of a simple object where the followi
 I tried some env, and looks like the best is chrome browser, all other env i could test have shown the expanding time to some extent.  
 
 Just to summarize a bit, a metric of how bad the setInterval behave could be the first iteration that overlaps. 
-Using an interval of 100ms for example the incident occurs only at the 30th iteration:
+Using an interval of 100ms for example the incident occurs only at the 30th iteration:  
 ![malta logo](https://raw.githubusercontent.com/fedeghe/interval/master/compare/100.png)  
 you can try it by yoursef in your env simply running:  
 ```
