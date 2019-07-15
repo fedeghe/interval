@@ -73,7 +73,9 @@ yarn compare 200 // for example, or passing any integer interval in ms
                  // ...you have to stop it manually (+c)
 ```
 
-... as You can see, **even this time**, _the wheel's sentence is the biggest trap our mind can fall into <sub>(me)</sub>_.
+As You can see, **even this time**...  
+  
+ _...the wheel's sentence is the biggest trap our mind can fall into <sub>(me)</sub>_
 
 
 
