@@ -32,7 +32,7 @@ will produce
 ```
 as You can see the distance between each contiguous allows some more stability compared to the analogous `setInterval` version:
 
-```
+``` js
 var clear = setInterval(function () {
     console.log(+new Date)
 }, 100);
