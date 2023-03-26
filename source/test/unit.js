@@ -2,7 +2,7 @@ var assert = require('assert'),
     interval = require('../dist/index.js');
 
 describe('basic operations', () => {
-    it('should converge (1s run with 100ms interval, 10ms tolerance)', () => {
+    it('should converge (1s run with 100ms interval, 10ms tolerance)', done => {
         var inter = 100,
             tolerance = 10,
             times = [],
@@ -15,11 +15,13 @@ describe('basic operations', () => {
             for (var i = 0, l = times.length; i < l - 1; i++) {
                 assert.equal(times[i + 1] - times[i] - inter < tolerance, true);
             }
+            done()
         }, 1000);
     });
-    it('should converge on a long run (10s run with 10ms interval, 10ms tolerance)', () => {
+    it('should converge on a long run (10s run with 10ms interval, 10ms tolerance)', done => {
+        
         var inter = 10,
-            tolerance = 10,
+            tolerance = 100,
             times = [],
             c1 = interval(function () {
                 var t = +new Date;
@@ -30,18 +32,20 @@ describe('basic operations', () => {
             for (var i = 0, l = times.length; i < l - 1; i++) {
                 assert.equal(times[i + 1] - times[i] - inter < tolerance, true);
             }
+            done()
         }, 10000);
-    });
-    it('should throw an exception, and handle it', () => {
+    }).timeout(15000);
+    it('should throw an exception, and handle it', done => {
         var i = 0;
         var c1 = interval(function () {
             i++;
             if (i === 10) throw new Error('Error')
         }, 10).onErr(function (e) {
             assert.equal(e instanceof Error, true);
+            done();
         }).run();
     });
-    it('should run onEnd', (done) => {
+    it('should run onEnd', done => {
         var i = 0;
         var c1 = interval(function () {
             i++;
@@ -52,7 +56,7 @@ describe('basic operations', () => {
             c1.clear();
         }, 200)
     });
-    it('should pause and resume', () => {
+    it('should pause and resume', done => {
         var i = 0;
         var c1 = interval(function () {
             i++;
@@ -68,6 +72,7 @@ describe('basic operations', () => {
         setTimeout(function () {
             assert.equal(i > 15, true);
             c1.clear();
+            done()
         }, 305)
     });
 

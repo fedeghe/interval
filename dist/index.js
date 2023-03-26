@@ -1,6 +1,6 @@
 'use strict';
 /*
-Interval v1.0.13
+Interval v1.0.14
 fedeghe <fedeghe@gmail.com>
 A really simple function to provide a better timing to replace the setInterval
 */
