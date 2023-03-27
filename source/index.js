@@ -45,7 +45,7 @@ const interval = (function (fn, interval, err) {
     };
     Interval.prototype.resume = function () {
         this.paused = false;
-        this._onPause && this._onResume(this);
+        this._onResume && this._onResume(this);
         return this;
     };
     Interval.prototype.runIfActive = function () {
