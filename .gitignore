@@ -5,3 +5,4 @@
 .printVersion
 .buildNum.json
 .coveralls.yml
+check.js
