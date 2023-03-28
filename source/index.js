@@ -63,7 +63,7 @@ const interval = (function (fn, interval, err) {
                     self.fn(self.counter - 1);
                 } catch (e) {
                     self._onErr &&
-                        self._onErr(e);
+                        self._onErr(e, self);
                     self.active = false;
                 }
             }

@@ -4,5 +4,6 @@
         "mkdir dist test"
     ],
     "#source/index.js": "dist -plugins=malta-js-uglify...malta-header-comment[name:\"source/header.txt\"]",
-    "#source/test/unit.js": "test"
+    "#source/test/unit.js": "test",
+    "#source/README.md": "."
 }

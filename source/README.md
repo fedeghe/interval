@@ -1,6 +1,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)
 [![Build Status](https://travis-ci.org/fedeghe/interval.svg?branch=master)](https://travis-ci.org/fedeghe/interval)
-# interval <sub><small>(v. 1.0.18)</small></sub>
+# interval <sub><small>(v. $PACKAGE.version$)</small></sub>
 
 A really simple tool meant to replace `setInterval`  
 primarily providing a stable interval execution, moreover can be paused and resumed
@@ -68,7 +68,7 @@ run #8: 1679946526532 // " 0
 run #9: 1679946526633 // " 1
 ENDED at 1679946526637   // end 6
 ```
-as You can see the distance between each contiguous allows more stability, but most importantly no divergence, compared to `[native] setInterval`:
+as You can see the distance between each contiguous allows some more stability compared to the analogous `setInterval` version:
 
 ``` js
 var clear = setInterval(function () {
@@ -90,8 +90,7 @@ which produce instead something similar to; ran on firefox which seem to have a 
 1562049640884 // " 15
 1562049640988 // " 19
 ```
-
-## _API_
+### _API_
 the `interval` function returns an instance of a simple object where the following methods are available:
 - **run(ƒn)** to start it, optionally accepts a function that will be called once started passing the interval instance
 - **end()** to force a stop manually
