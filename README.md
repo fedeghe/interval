@@ -97,9 +97,9 @@ the `interval` function returns an instance of a simple object where the followi
 - **onErr(fn)** to pass a function that will handle any thrown err; fn will be invoked receiving the error and the instance
 - **onEnd(fn)** to pass a function that will be called when `end` will be called; fn will be invoked receiving the instance  
 - **onPause(fn)** to pass a function that will be called when `pause` will be called; fn will be invoked receiving the instance 
-- **pause()** to pause it manually
+- **pause()** to pause it manually (just pause interval execution; do not delays the end maybe booked with `endsIn`)
 - **onResume(fn)** to pass a function that will be called when `resume` will be called; fn will be invoked receiving the instance  
-- **resume()** to resume it manually
+- **resume()** to resume it manually (just resume interval execution)
 
 ### setInterval is divergent  
 I tried some env, and looks like the best is chrome browser, all other envs test have shown time warping (+) to some extent.  
