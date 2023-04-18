@@ -5,7 +5,7 @@
 .nycrc.json
 .travis.yml
 yarn.lock
-check.js
+/check
 /.git
 /.nyc_output
 /coverage
