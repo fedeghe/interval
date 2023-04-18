@@ -1,6 +1,6 @@
 {
     "name": "@fedeghe/interval",
-    "version": "1.0.19",
+    "version": "1.0.20",
     "description": "A really simple function to provide a better timing to replace the setInterval",
     "main": "dist/index.js",
     "keywords": [
@@ -8,7 +8,7 @@
         "better setInterval"
     ],
     "scripts": {
-        "builddev": "malta source/builddev.json",
+        "dev": "malta source/builddev.json",
         "build": "malta source/build.json",
         "test": "mocha",
         "lint": "eslint source",

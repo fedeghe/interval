@@ -16,14 +16,14 @@ const interval = require('@fedeghe/interval')
 use 
 ``` js
 interval(
-    c => console.log(`cycle #${c} (${+new Date()})`),
+    ({ cycle }) => console.log(`cycle #${cycle} (${+new Date()})`),
     100
 ).run()
 ```
 but something more is possible:
 ``` js
 var intr = interval(
-        c => console.log(`cycle #${c} (${+new Date()})`),
+        ({ cycle }) => console.log(`cycle #${cycle} (${+new Date()})`),
         100
     )
     .onEnd(() => console.log(`ENDED at ${+new Date()}`))
@@ -36,7 +36,7 @@ setTimeout(function () {
 ```
 same thing can be rewritten as 
 ```js
-interval(r => console.log(`run #${r}: ${+new Date}`), 1e2)
+interval(({ cycle }) => console.log(`run #${cycle}: ${+new Date}`), 1e2)
     .onEnd(() => console.log(`ENDED at ${+new Date()}`))
     .run(inst => {
         console.log(`STARTED at ${+new Date()}`)
@@ -45,7 +45,7 @@ interval(r => console.log(`run #${r}: ${+new Date}`), 1e2)
 ```
 or
 ``` js
-interval(r => console.log(`run #${r}: ${+new Date}`), 1e2)
+interval(({ cycle }) => console.log(`run #${cycle}: ${+new Date}`), 1e2)
     .onEnd(() => console.log(`ENDED at ${+new Date()}`))
     .endsIn(1e3)
     .run(console.log(`STARTED at ${+new Date()}`));
@@ -97,7 +97,9 @@ the `interval` function returns an instance of a simple object where the followi
 - **onErr(fn)** to pass a function that will handle any thrown err; fn will be invoked receiving the error and the instance
 - **onEnd(fn)** to pass a function that will be called when `end` will be called; fn will be invoked receiving the instance  
 - **onPause(fn)** to pass a function that will be called when `pause` will be called; fn will be invoked receiving the instance 
-- **pause()** to pause it manually (just pause interval execution; do not delays the end maybe booked with `endsIn`)
+- **pause(_slide_)**  
+    to pause it manually (by just pause interval execution; do not delays the end maybe booked with `endsIn`)  
+    in case the pause needs to slide the planned end (set with _endsIn()_) the pass `true`
 - **onResume(fn)** to pass a function that will be called when `resume` will be called; fn will be invoked receiving the instance  
 - **resume()** to resume it manually (just resume interval execution)
 
