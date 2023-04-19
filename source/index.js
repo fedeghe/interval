@@ -29,14 +29,14 @@ var interval = (function () {
     }
 
     function runHooks (instance, which, params) {
+        params = params || {};
         which in instance.subscribers &&
         instance.subscribers[which].forEach(
-            function (subscriber) { subscriber.apply(null, [instance].concat(params)); }
+            function (subscriber) { subscriber(Object.assign({}, params, { instance: instance })); }
         );
     }
 
     function Interval (fn, tick) {
-        this.fn = fn;
         this.tick = tick;
         /**
          * until run gets called this must not have a consumable value */
@@ -100,6 +100,11 @@ var interval = (function () {
 
         // ticking notifications to
         this.to = null;
+
+        this.addedCycles = 0;
+
+        // add tick
+        this.onTick(fn);
     }
 
     Interval.prototype.run = function (onStart) {
@@ -126,18 +131,31 @@ var interval = (function () {
                                 trg = SD + tick * cycle
 
          */
-        this.onStart(onStart);
-        onStart && runHooks(this, 'start', [this]);
+        if (onStart) {
+            this.onStart(onStart);
+            runHooks(this, 'start');
+        }
 
         this.to = setTimeout(function () {
             if ([statuses.ended, statuses.paused, statuses.error].includes(self.status)) return self;
             try {
-                runHooks(self, 'tick');
-                self.fn({ cycle: self.cycle });
+                var total = Now() - self.StartTime,
+                    effective = total - self.pauses,
+                    remaining = self.definite ? self.definite - total + self.pauses : undefined,
+                    percentage = self.definite
+                        ? parseFloat((100 * remaining / self.definite).toFixed(3), 10)
+                        : undefined;
+                runHooks(self, 'tick', {
+                    cycle: self.cycle - self.addedCycles,
+                    elapsed: total,
+                    effective: effective,
+                    remaining: remaining,
+                    percentage: percentage
+                });
                 self.cycle++;
             } catch (e) {
                 switchState(self, statuses.error);
-                runHooks(self, 'err', [e]);
+                runHooks(self, 'err', { error: e });
             }
             self.run();
         }, next);
@@ -145,7 +163,6 @@ var interval = (function () {
     };
 
     Interval.prototype.pause = function (sliding) {
-        /* istanbul ignore next */
         if (!switchState(this, statuses.paused)) return this;
         runHooks(this, 'pause');
         // might need to move the end forward, before
@@ -160,7 +177,6 @@ var interval = (function () {
     };
 
     Interval.prototype.resume = function () {
-        /* istanbul ignore next */
         if (!switchState(this, statuses.running)) return this;
         var self = this,
             now = Now(),
@@ -169,7 +185,8 @@ var interval = (function () {
         this.pauses += pausedFor;
 
         // cycle needs to be updated so to be able
-        this.cycle += ~~(pausedFor / this.tick);
+        this.addedCycles += ~~(pausedFor / this.tick);
+        this.cycle += this.addedCycles;
         elapsed = now - this.StartTime - (this.sliding ? this.pauses : 0);
 
         this.definiteDown = this.definite - elapsed;
@@ -182,6 +199,7 @@ var interval = (function () {
                 self.end();
             }, this.definiteDown);
         }
+        return this;
     };
 
     Interval.prototype.endsIn = function (ms) {

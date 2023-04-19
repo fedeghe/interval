@@ -1,5 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)  
-# interval <sub><small>(v. 1.0.20)</small></sub>
+# interval <sub><small>(v. 1.0.21)</small></sub>
 
 A really simple tool meant to replace `setInterval`  
 primarily providing a stable interval execution, moreover can be paused and resumed
@@ -91,17 +91,24 @@ which produce instead something similar to; ran on firefox which seem to have a 
 ```
 ### _API_
 the `interval` function returns an instance of a simple object where the following methods are available:
-- **run(ƒn)** to start it, optionally accepts a function that will be called once started passing the interval instance
+- **run(ƒn)** to start it, optionally accepts a function that will be called once started passing _**some info**_
 - **end()** to force a stop manually
 - **endsIn(ms)** to plan a stop after ms milliseconds
-- **onErr(fn)** to pass a function that will handle any thrown err; fn will be invoked receiving the error and the instance
-- **onEnd(fn)** to pass a function that will be called when `end` will be called; fn will be invoked receiving the instance  
-- **onPause(fn)** to pass a function that will be called when `pause` will be called; fn will be invoked receiving the instance 
 - **pause(_slide_)**  
     to pause it manually (by just pause interval execution; do not delays the end maybe booked with `endsIn`)  
     in case the pause needs to slide the planned end (set with _endsIn()_) the pass `true`
-- **onResume(fn)** to pass a function that will be called when `resume` will be called; fn will be invoked receiving the instance  
 - **resume()** to resume it manually (just resume interval execution)
+- **onErr(fn)** to pass a function that will handle any thrown err; fn will be invoked receiving `{error, instance}`
+- **onEnd(fn)** to pass a function that will be called when `end` will be called; fn will be invoked receiving _**some info**_  
+- **onPause(fn)** to pass a function that will be called when `pause` will be called; fn will be invoked receiving _**some info**_ 
+- **onResume(fn)** to pass a function that will be called when `resume` will be called; fn will be invoked receiving _**some info**_  
+
+_**some info**_ consists in a object containing: 
+- **`cycle`**: an integer containing the currect cycle of notification 
+- **`elapsed`**: the elapsed time (pauses included)   
+- **`effective`**: the elapsed time (pauses excluded)
+- **`remaining`**: the remaining time
+- **`percentage`**: the progress percentage (float, precision 3)
 
 ### setInterval is divergent  
 I tried some env, and looks like the best is chrome browser, all other envs test have shown time warping (+) to some extent.  

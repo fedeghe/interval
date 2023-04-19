@@ -43,8 +43,8 @@ describe('basic operations', () => {
             if (i === 10) throw new Error('Error')
         }, 10)
         .onTick(() => {t++;})
-        .onErr(function (instance, err) {
-            assert.equal(err instanceof Error, true);
+        .onErr(function ({ error }) {
+            assert.equal(error instanceof Error, true);
             assert.ok(t > 0);
             done();
         }).run();
