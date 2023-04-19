@@ -95,13 +95,15 @@ the `interval` function returns an instance of a simple object where the followi
 - **end()** to force a stop manually
 - **endsIn(ms)** to plan a stop after ms milliseconds
 - **pause(_slide_)**  
-    to pause it manually (by just pause interval execution; do not delays the end maybe booked with `endsIn`)  
-    in case the pause needs to slide the planned end (set with _endsIn()_) the pass `true`
-- **resume()** to resume it manually (just resume interval execution)
-- **onErr(fn)** to pass a function that will handle any thrown err; fn will be invoked receiving `{error, instance}`
-- **onEnd(fn)** to pass a function that will be called when `end` will be called; fn will be invoked receiving _**some info**_  
-- **onPause(fn)** to pass a function that will be called when `pause` will be called; fn will be invoked receiving _**some info**_ 
-- **onResume(fn)** to pass a function that will be called when `resume` will be called; fn will be invoked receiving _**some info**_  
+    - to pause it manually (by just pause interval execution; do not delays the end maybe booked with `endsIn`)  
+    -  in case the pause needs to move the planned end accordingly (set with _endsIn()_) then pass `true` when invoking that function. 
+- **resume()** to resume it manually  
+
+few hooks, u can set one or more function for each of the following:
+- **onErr(fn)** to pass a function that will handle any thrown err; _fn_ will be invoked receiving `{error, instance}`
+- **onEnd(fn)** to pass a function that will be called when `end` will be called; _fn_ will be invoked receiving _**some info**_  
+- **onPause(fn)** to pass a function that will be called when `pause` will be called; _fn_ will be invoked receiving _**some info**_ 
+- **onResume(fn)** to pass a function that will be called when `resume` will be called; _fn_ will be invoked receiving _**some info**_  
 
 _**some info**_ consists in a object containing: 
 - **`cycle`**: an integer containing the currect cycle of notification 
@@ -110,14 +112,14 @@ _**some info**_ consists in a object containing:
 - **`remaining`**: the remaining time
 - **`percentage`**: the progress percentage (float, precision 3)
 
-### setInterval is divergent  
-I tried some env, and looks like the best is chrome browser, all other envs test have shown time warping (+) to some extent.  
+## Just cause `setInterval` is badly divergent!  
+I tried some environments and looks like all shows time warping (+) to some extent.  
 
-Node js as well does not show great  results.
 Just to summarize a bit, a metric of how bad the `setInterval` behave could be the first iteration that overlaps. 
 Using an interval of 100ms for example the incident occurs already at the **30th** cycle:  
 ![100runs](https://raw.githubusercontent.com/fedeghe/interval/master/compare/100.png)  
-you can try it by yoursef in your env simply running:  
+you can try it by yoursef in your node environment simply running:  
+
 ```
 yarn compare 200 // for example, or passing any integer interval in ms
                  // ...you have to stop it manually (+c)
