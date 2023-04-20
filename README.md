@@ -110,7 +110,7 @@ _**some info**_ consists in a object containing:
 - **`elapsed`**: the elapsed time (pauses included)   
 - **`effective`**: the elapsed time (pauses excluded)
 - **`remaining`**: the remaining time
-- **`percentage`**: the progress percentage (float, precision 3)
+- **`progress`**: the progress percentage (float, precision 3)
 
 ## Just cause `setInterval` is badly divergent!  
 I tried some environments and looks like all shows time warping (+) to some extent.  
