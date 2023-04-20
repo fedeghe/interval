@@ -36,13 +36,52 @@ var interval = (function () {
         );
     }
 
+    function getInfo (self) {
+        var total = Now() - self.StartTime,
+            effective = total - self.pauses,
+            remaining = self.definite ? self.definite - total + self.pauses : undefined,
+            progress = self.definite
+                ? parseFloat((100 - 100 * remaining / self.definite).toFixed(3), 10)
+                : undefined;
+        return {
+            cycle: self.cycle - self.addedCycles,
+            elapsed: total,
+            effective: effective,
+            remaining: remaining,
+            progress: progress
+        };
+    }
+
+    /**
+     * basic fix to setTimeout delays on the long (and even short run)
+     * this is very more than enough to fix the native divergent misbehaviour
+     */
+    function getNext (self) {
+        /**
+           SD
+            0         1         2         3         4         5         6         7
+            |=========|=========|=========|=========|=========|=========|=========|=========
+            o-------|
+                   now
+                    |---------|E|
+                            bad = now + tick
+                                |
+                                |
+                                trg = SD + tick * cycle
+
+         */
+        var now = Now(),
+            target = self.StartTime + (self.cycle + 1) * self.tick,
+            bad = now + self.tick,
+            fix = target - bad;
+        return self.tick + fix;
+    }
+
     function Interval (fn, tick) {
         this.tick = tick;
         /**
          * until run gets called this must not have a consumable value */
         this.StartTime = null;
-
-        // ticking timeout
 
         /**
          * this is the very beginning status before run */
@@ -108,54 +147,29 @@ var interval = (function () {
     }
 
     Interval.prototype.run = function (onStart) {
-        if (!switchState(this, statuses.running)) return;
+        if (this.status === statuses.error) return this;
+
+        // violate the machine
+        if (this.status === statuses.init) this.status = statuses.running;
         this.StartTime = this.StartTime || Now();
 
         var self = this,
-            now = Now(),
-            target = this.StartTime + (this.cycle + 1) * this.tick,
-            bad = now + this.tick,
-            addFix = target - bad,
-            next = this.tick + addFix;
+            next = getNext(this);
 
-        /**
-           SD
-            0         1         2         3         4         5         6         7
-            |=========|=========|=========|=========|=========|=========|=========|=========
-            o-------|
-                   now
-                    |---------|E|
-                            bad = now + tick
-                                |
-                                |
-                                trg = SD + tick * cycle
-
-         */
         if (onStart) {
             this.onStart(onStart);
             runHooks(this, 'start');
         }
 
         this.to = setTimeout(function () {
-            if ([statuses.ended, statuses.paused, statuses.error].includes(self.status)) return self;
+            if ([statuses.ended, statuses.error].includes(self.status)) return self;
+            var info = getInfo(self);
             try {
-                var total = Now() - self.StartTime,
-                    effective = total - self.pauses,
-                    remaining = self.definite ? self.definite - total + self.pauses : undefined,
-                    percentage = self.definite
-                        ? parseFloat((100 * remaining / self.definite).toFixed(3), 10)
-                        : undefined;
-                runHooks(self, 'tick', {
-                    cycle: self.cycle - self.addedCycles,
-                    elapsed: total,
-                    effective: effective,
-                    remaining: remaining,
-                    percentage: percentage
-                });
+                self.status === statuses.running && runHooks(self, 'tick', info);
                 self.cycle++;
             } catch (e) {
                 switchState(self, statuses.error);
-                runHooks(self, 'err', { error: e });
+                runHooks(self, 'err', Object.assign(info, { error: e }));
             }
             self.run();
         }, next);
@@ -164,11 +178,10 @@ var interval = (function () {
 
     Interval.prototype.pause = function (sliding) {
         if (!switchState(this, statuses.paused)) return this;
-        runHooks(this, 'pause');
+        runHooks(this, 'pause', getInfo(this));
         // might need to move the end forward, before
         // setting again the definiteTo on resume
         this.sliding = !!sliding && this.definite;
-        clearTimeout(this.to);
         if (this.definite) {
             clearTimeout(this.definiteTo);
         }
@@ -182,18 +195,16 @@ var interval = (function () {
             now = Now(),
             pausedFor = now - this.pauseStart,
             elapsed;
-        this.pauses += pausedFor;
 
-        // cycle needs to be updated so to be able
-        this.addedCycles += ~~(pausedFor / this.tick);
-        this.cycle += this.addedCycles;
-        elapsed = now - this.StartTime - (this.sliding ? this.pauses : 0);
+        this.pauses += this.sliding ? pausedFor : 0;
 
+        elapsed = now - this.StartTime - this.pauses;
         this.definiteDown = this.definite - elapsed;
-
         this.sliding = false;
-        this.run();
-        runHooks(this, 'resume');
+
+        this.addedCycles += ~~(pausedFor / this.tick);
+
+        runHooks(this, 'resume', getInfo(this));
         if (this.definite) {
             this.definiteTo = setTimeout(function () {
                 self.end();
@@ -205,7 +216,7 @@ var interval = (function () {
     Interval.prototype.endsIn = function (ms) {
         var self = this;
         this.definite = Math.abs(parseInt(ms, 10));
-        // clar it in case it exists already
+        // clear it in case it exists already
         if (this.definiteTo) clearTimeout(this.definiteTo);
         // and set it
         this.definiteTo = setTimeout(function () {
@@ -216,9 +227,10 @@ var interval = (function () {
 
     Interval.prototype.end = function () {
         if (!switchState(this, statuses.ended)) return;
-        runHooks(this, 'end');
+        runHooks(this, 'end', getInfo(this));
         return this;
     };
+
     Interval.prototype.onStart = function (fn) { if (isFunction(fn)) this.subscribers.start.push(fn); return this; };
     Interval.prototype.onPause = function (fn) { if (isFunction(fn)) this.subscribers.pause.push(fn); return this; };
     Interval.prototype.onResume = function (fn) { if (isFunction(fn)) this.subscribers.resume.push(fn); return this; };

@@ -35,10 +35,10 @@ describe('basic operations', () => {
             done()
         }, 10000);
     }).timeout(15000);
-    it('should throw an exception, and handle it', done => {
+    it('should throw an exception, and handle it', () => {
         var i = 0,
             t = 0;
-        var c1 = interval(function () {
+        interval(function () {
             i++;
             if (i === 10) throw new Error('Error')
         }, 10)
@@ -46,13 +46,13 @@ describe('basic operations', () => {
         .onErr(function ({ error }) {
             assert.equal(error instanceof Error, true);
             assert.ok(t > 0);
-            done();
-        }).run();
+        })
+        .run();
     });
     it('should run onEnd, using endsIn', done => {
         var i = 0;
         interval(function () {i++;}, 10)
-            .onEnd(function (e) {done()})
+            .onEnd(function () {done(); })
             .endsIn(200)
             .run();
     });

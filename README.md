@@ -1,5 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)  
-# interval <sub><small>(v. 1.0.21)</small></sub>
+# interval <sub><small>(v. 1.0.22)</small></sub>
 
 A really simple tool meant to replace `setInterval`  
 primarily providing a stable interval execution, moreover can be paused and resumed
@@ -110,7 +110,7 @@ _**some info**_ consists in a object containing:
 - **`elapsed`**: the elapsed time (pauses included)   
 - **`effective`**: the elapsed time (pauses excluded)
 - **`remaining`**: the remaining time
-- **`percentage`**: the progress percentage (float, precision 3)
+- **`progress`**: the progress percentage (float, precision 3)
 
 ## Just cause `setInterval` is badly divergent!  
 I tried some environments and looks like all shows time warping (+) to some extent.  
