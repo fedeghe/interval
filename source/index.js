@@ -146,6 +146,10 @@ var interval = (function () {
         this.onTick(fn);
     }
 
+    Interval.prototype.getStatus = function () {
+        return getInfo(this);
+    };
+
     Interval.prototype.run = function (onStart) {
         if (this.status === statuses.error) return this;
 

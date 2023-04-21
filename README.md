@@ -1,5 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)  
-# interval <sub><small>(v. 1.0.22)</small></sub>
+# interval <sub><small>(v. 1.0.23)</small></sub>
 
 A really simple tool meant to replace `setInterval`  
 primarily providing a stable interval execution, moreover can be paused and resumed
@@ -98,6 +98,7 @@ the `interval` function returns an instance of a simple object where the followi
     - to pause it manually (by just pause interval execution; do not delays the end maybe booked with `endsIn`)  
     -  in case the pause needs to move the planned end accordingly (set with _endsIn()_) then pass `true` when invoking that function. 
 - **resume()** to resume it manually  
+- **getStatus()** get _**some info**_    
 
 few hooks, u can set one or more function for each of the following:
 - **onErr(fn)** to pass a function that will handle any thrown err; _fn_ will be invoked receiving `{error, instance}`

@@ -123,8 +123,13 @@ describe('basic operations', () => {
                     // some tolerance
                     assert.ok(dist < step);
                     done();
-                });
-        
+                }),
+                status = c1.getStatus();
+        assert('cycle' in status);
+        assert('elapsed' in status);
+        assert('effective' in status);
+        assert('remaining' in status);
+        assert('progress' in status);
         setTimeout(function () {
             c1.pause(true);
         }, 1000);
