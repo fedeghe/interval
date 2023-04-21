@@ -104,6 +104,7 @@ the `interval` function returns an instance of a simple object where the followi
 few hooks, u can set one or more function for each of the following:
 - **onErr(fn)** to pass a function that will handle any thrown err; _fn_ will be invoked receiving `{error, instance}`
 - **onEnd(fn)** to pass a function that will be called when `end` will be called; _fn_ will be invoked receiving _**some info**_  
+- **onStart(fn)** to pass a function that will be called when `run` will be called; _fn_ will be invoked receiving {instance} 
 - **onPause(fn)** to pass a function that will be called when `pause` will be called; _fn_ will be invoked receiving _**some info**_ 
 - **onResume(fn)** to pass a function that will be called when `resume` will be called; _fn_ will be invoked receiving _**some info**_  
 - **onUpdate(fn)** to pass a function that will be called when `updater` will be called; _fn_ will be invoked receiving _**some info**_  

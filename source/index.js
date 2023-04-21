@@ -175,7 +175,7 @@ var interval = (function () {
 
         if (onStart) {
             this.onStart(onStart);
-            runHooks(this, 'start');
+            runHooks(this, 'start', { instance: self });
         }
 
         this.to = setTimeout(function () {
