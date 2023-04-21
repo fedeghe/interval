@@ -117,6 +117,8 @@ var interval = (function () {
          */
         this.sliding = false;
 
+        // flag for running onStart hooks withing run
+        this.started = false;
         /**
          * cumulative pause, more than once could be called
          */
@@ -151,14 +153,15 @@ var interval = (function () {
     };
 
     Interval.prototype.update = function (ms) {
-        var howMuch = parseInt(ms, 10), end;
+        var howMuch = parseInt(ms, 10), end,
+            info = getInfo(this);
         /* instabul ingore-next */
         if (howMuch && this.definite) {
-            end = this.definite + howMuch;
+            end = this.definite + howMuch - info.effective;
             clearTimeout(this.definiteTo);
             end > 0 && this.endsIn(end);
         }
-        runHooks(this, 'update', getInfo(this));
+        runHooks(this, 'update', info);
         return this;
     };
 
@@ -172,10 +175,9 @@ var interval = (function () {
         var self = this,
             next = getNext(this);
 
-        if (onStart) {
-            this.onStart(onStart);
-            runHooks(this, 'start', { instance: self });
-        }
+        onStart && this.onStart(onStart);
+        !this.started && runHooks(this, 'start', { instance: self });
+        this.started = true;
 
         this.to = setTimeout(function () {
             if ([statuses.ended, statuses.error].includes(self.status)) return self;
