@@ -29,7 +29,6 @@ var interval = (function () {
     }
 
     function runHooks (instance, which, params) {
-        params = params || {};
         which in instance.subscribers &&
         instance.subscribers[which].forEach(
             function (subscriber) { subscriber(Object.assign({}, params, { instance: instance })); }
