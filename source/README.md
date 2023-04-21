@@ -106,6 +106,7 @@ few hooks, u can set one or more function for each of the following:
 - **onEnd(fn)** to pass a function that will be called when `end` will be called; _fn_ will be invoked receiving _**some info**_  
 - **onPause(fn)** to pass a function that will be called when `pause` will be called; _fn_ will be invoked receiving _**some info**_ 
 - **onResume(fn)** to pass a function that will be called when `resume` will be called; _fn_ will be invoked receiving _**some info**_  
+- **onUpdate(fn)** to pass a function that will be called when `updater` will be called; _fn_ will be invoked receiving _**some info**_  
 
 _**some info**_ consists in a object containing: 
 - **`cycle`**: an integer containing the currect cycle of notification 

@@ -141,16 +141,18 @@ describe('basic operations', () => {
     it('should update as expected', () => {
         var targetEnd = 1e3,
             step = 100;
-        var start, end,
+        var start, end, updated = false,
             c1 = interval(() => {}, step)
                 .endsIn(targetEnd)
                 .run(() => {start = +new Date();})
+                .onUpdate(() => {updated = true;})
                 .onEnd(() => {
                     end = +new Date();
                     var elapsed = end - start;
                     
                     // some tolerance
                     assert.ok(elapsed > 1200);
+                    assert.ok(updated);
                 });
 
         setTimeout(function () {

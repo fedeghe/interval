@@ -132,6 +132,7 @@ var interval = (function () {
             start: [],
             pause: [],
             resume: [],
+            update: [],
             end: [],
             tick: [],
             err: []
@@ -158,6 +159,7 @@ var interval = (function () {
             clearTimeout(this.definiteTo);
             end > 0 && this.endsIn(end);
         }
+        runHooks(this, 'update', getInfo(this));
         return this;
     };
 
@@ -249,6 +251,7 @@ var interval = (function () {
     Interval.prototype.onStart = function (fn) { if (isFunction(fn)) this.subscribers.start.push(fn); return this; };
     Interval.prototype.onPause = function (fn) { if (isFunction(fn)) this.subscribers.pause.push(fn); return this; };
     Interval.prototype.onResume = function (fn) { if (isFunction(fn)) this.subscribers.resume.push(fn); return this; };
+    Interval.prototype.onUpdate = function (fn) { if (isFunction(fn)) this.subscribers.update.push(fn); return this; };
     Interval.prototype.onTick = function (fn) { if (isFunction(fn)) this.subscribers.tick.push(fn); return this; };
     Interval.prototype.onErr = function (fn) { if (isFunction(fn)) this.subscribers.err.push(fn); return this; };
     Interval.prototype.onEnd = function (fn) { if (isFunction(fn)) this.subscribers.end.push(fn); return this; };

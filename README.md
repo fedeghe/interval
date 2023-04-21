@@ -1,5 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)  
-# interval <sub><small>(v. 1.0.24)</small></sub>
+# interval <sub><small>(v. 1.0.25)</small></sub>
 
 A really simple tool meant to replace `setInterval`  
 primarily providing a stable interval execution, moreover can be paused and resumed
@@ -106,6 +106,7 @@ few hooks, u can set one or more function for each of the following:
 - **onEnd(fn)** to pass a function that will be called when `end` will be called; _fn_ will be invoked receiving _**some info**_  
 - **onPause(fn)** to pass a function that will be called when `pause` will be called; _fn_ will be invoked receiving _**some info**_ 
 - **onResume(fn)** to pass a function that will be called when `resume` will be called; _fn_ will be invoked receiving _**some info**_  
+- **onUpdate(fn)** to pass a function that will be called when `updater` will be called; _fn_ will be invoked receiving _**some info**_  
 
 _**some info**_ consists in a object containing: 
 - **`cycle`**: an integer containing the currect cycle of notification 
