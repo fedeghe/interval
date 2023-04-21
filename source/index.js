@@ -150,6 +150,17 @@ var interval = (function () {
         return getInfo(this);
     };
 
+    Interval.prototype.update = function (ms) {
+        var howMuch = parseInt(ms, 10), end;
+        /* instabul ingore-next */
+        if (howMuch && this.definite) {
+            end = this.definite + howMuch;
+            clearTimeout(this.definiteTo);
+            end > 0 && this.endsIn(end);
+        }
+        return this;
+    };
+
     Interval.prototype.run = function (onStart) {
         if (this.status === statuses.error) return this;
 

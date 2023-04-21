@@ -137,6 +137,27 @@ describe('basic operations', () => {
             c1.resume();
         }, pauseAfter + pauseLength);
     }).timeout(10000);
+
+    it('should update as expected', () => {
+        var targetEnd = 1e3,
+            step = 100;
+        var start, end,
+            c1 = interval(() => {}, step)
+                .endsIn(targetEnd)
+                .run(() => {start = +new Date();})
+                .onEnd(() => {
+                    end = +new Date();
+                    var elapsed = end - start;
+                    
+                    // some tolerance
+                    assert.ok(elapsed > 1200);
+                });
+
+        setTimeout(function () {
+            c1.update(200);
+        }, 500);
+
+    });
 });
 describe('edge cases', () => {
     it('cant pause when not started', done => {
