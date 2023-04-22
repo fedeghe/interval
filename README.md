@@ -116,7 +116,21 @@ _**some info**_ consists in a object containing:
 - **`remaining`**: the remaining time
 - **`progress`**: the progress percentage (float, precision 3)
 
-## Just cause `setInterval` is badly divergent!  
+## Sliding pauses  
+This thing applies **only** in the case one sets the end of the interval, thus only when `endsIn` is invoked.
+```
+                  P1     P1         P2                PLANNED      SLIDED
+       start      pause  resume     pause                 END      END
+         v        v      v          v                       v      v          
+running  |-----|--o      .-|-----|--.            .-|-----|--E--|---E-|----->
+ paused  |        '--|---'          '..|.....|...'
+ ticks   |-----T-----T-----T-----T-----T-----T-----T-----T-----T-----T----->
+```
+here the end is set to be E invoking `endsIn(E)`, the we trigger two different pauses:  
+- **P1 sliding pause**; pauses the ticking notifications until not resumed, assuming it will last for and amount of time equal to TP1 the planned end `E` will be `E + TP1`. Still need sto be resumed before the the planned END, otherwise the planned end will not be updated.
+- **P2 default pause**; it just pauses the ticking notifications without updating the planned end.
+
+## Why? ... just cause `setInterval` is badly divergent!  
 I tried some environments and looks like all shows time warping (+) to some extent.  
 
 Just to summarize a bit, a metric of how bad the `setInterval` behave could be the first iteration that overlaps. 
@@ -129,7 +143,38 @@ yarn compare 200 // for example, or passing any integer interval in ms
                  // ...you have to stop it manually (+c)
 ```
 
+<details>
+<summary>here us can see the `compare` script</summary>
 
+``` js  
+let args = process.argv.slice(2),
+    start = +new Date(),
+    i1 = 0,
+    i2 = 0,
+    increment = parseInt(args[0], 10) || 100;
+const interval = require('./../dist/index.js'),
+    int = interval(() => {
+        const now = +new Date(),
+            precise = ++i1 * increment + start;
+        let diff = (now - precise);
+        console.log(`better ${i1} > ${precise} ${now} \x1b[1m%s\x1b[0m`, `${diff}`);
+    }, increment).run(),
+
+    intervalW = setInterval(() => {
+        const now = +new Date(),
+            precise = ++i2 * increment + start;
+        let diff = (now - precise);
+        console.log(`   bad ${i2} > ${precise} ${now} \x1b[31m%s\x1b[0m`, `${diff}`);
+    }, increment);
+
+// stop anyway after one hour in case no ctrl+c
+setTimeout(() => {
+    int.clear();
+    clearInterval(intervalW);
+}, 3600000 * 1);
+
+```
+</details>
 
 
 

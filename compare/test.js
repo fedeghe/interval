@@ -1,4 +1,3 @@
-
 let args = process.argv.slice(2),
     start = +new Date(),
     i1 = 0,
@@ -19,7 +18,8 @@ const interval = require('./../dist/index.js'),
         console.log(`   bad ${i2} > ${precise} ${now} \x1b[31m%s\x1b[0m`, `${diff}`);
     }, increment);
 
+// stop anyway after one hour in case no ctrl+c
 setTimeout(() => {
     int.clear();
     clearInterval(intervalW);
-}, 3600000 * 8);
+}, 3600000 * 1);

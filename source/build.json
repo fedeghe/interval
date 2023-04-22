@@ -5,5 +5,5 @@
     ],
     "#source/index.js": "dist -plugins=malta-js-uglify...malta-header-comment[name:\"source/header.txt\"]",
     "#source/test/unit.js": "test",
-    "#source/README.md": "."
+    "#source/README.md": ". -options=showPath:false"
 }
