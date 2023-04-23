@@ -4,7 +4,7 @@ var interval = (function () {
     function runHooks (instance, which, params) {
         which in instance.subscribers &&
         instance.subscribers[which].forEach(
-            function (subscriber) { subscriber(Object.assign({}, params, { i: instance })); }
+            function (subscriber) { subscriber(Object.assign({}, params, { instance: instance })); }
         );
     }
 
@@ -25,7 +25,7 @@ var interval = (function () {
         }
         return {
             at: Now(),
-            i: self,
+            instance: self,
             cycle: self.cycle - self.addedCycles,
             elapsed: elapsed,
             effective: effective,
@@ -75,6 +75,7 @@ var interval = (function () {
         this.started = false;
         this.sliding = false;
         this.definite = false;
+
         this.subscribers = {
             start: [],
             pause: [],
@@ -84,11 +85,13 @@ var interval = (function () {
             tick: [],
             err: []
         };
+
         this.onTick(fn);
     }
 
     Interval.prototype.getStatus = function () { return getInfo(this); };
 
+    // Interval.prototype.decrement = function (ms) { return this.increment(-ms); };
     Interval.prototype.tune = function (ms) {
         if (!this.definite) return this;
         var now = Now(),
@@ -136,11 +139,11 @@ var interval = (function () {
 
         // only on first invocation
         if (!this.started) {
-            this.started = true;
             this.status = 'running';
             onStart && this.onStart(onStart, true);
-            runHooks(this, 'start', getInfo(this));
-            this.definite && this.resetEnd();
+            runHooks(this, 'start', { instance: self });
+            this.started = true;
+            this.resetEnd();
         }
 
         this.tickerTo = setTimeout(function () {
@@ -162,7 +165,7 @@ var interval = (function () {
         this.status = 'paused';
         runHooks(this, 'pause', getInfo(this));
         this.sliding = !!sliding;
-        if (this.definite) clearTimeout(this.finalTo);
+        clearTimeout(this.finalTo);
         this.pauseStart = Now();
         return this;
     };
@@ -177,14 +180,13 @@ var interval = (function () {
         this.addedCycles += ~~(pausedFor / this.tick);
 
         this.pauses += this.sliding && pausedFor;
-        if (this.definite) {
-            elapsed = now - this.StartTime - this.pauses;
-            total = this.EndTime - this.StartTime;
-            remaining = total - elapsed;
 
-            this.endsAfter = remaining;
-            this.resetEnd();
-        }
+        elapsed = now - this.StartTime - this.pauses;
+        total = this.EndTime - this.StartTime;
+        remaining = total - elapsed;
+
+        this.endsAfter = remaining;
+        this.resetEnd();
 
         this.sliding = false;
         return this;
@@ -197,7 +199,10 @@ var interval = (function () {
     };
 
     Interval.prototype.onStart = function (fn, first) {
-        this.subscribers.start[first ? 'unshift' : 'push'](fn);
+        if (isFunction(fn)) {
+            var method = first ? 'unshift' : 'push';
+            this.subscribers.start[method](fn);
+        }
         return this;
     };
 
@@ -209,7 +214,7 @@ var interval = (function () {
     Interval.prototype.onTune = function (fn) { if (isFunction(fn)) this.subscribers.tune.push(fn); return this; };
     Interval.prototype.at = function (time, fn) {
         var self = this;
-        setTimeout(function () { fn({ i: self }); }, time);
+        setTimeout(function () { fn({ instance: self }); }, time);
         return this;
     };
 

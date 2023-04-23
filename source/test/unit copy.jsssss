@@ -149,15 +149,15 @@ describe('basic operations', () => {
         interval(() => {}, step)
             .endsIn(targetEnd)
             .onTune(() => {tuned = true;})
-            .onEnd(({ at }) => {
-                end = at;
+            .onEnd(() => {
+                end = +new Date();
                 var elapsed = end - start;
                 
                 // some tolerance
-                assert.ok(elapsed >= targetEnd + tuning);
+                assert.ok(elapsed > targetEnd + tuning);
                 assert.ok(tuned);
             })
-            .at(tuneAt, ({ i }) => i.tune(tuning))
+            .at(tuneAt, ({instance}) => instance.tune(tuning))
             .run(() => {start = +new Date();});
 
 
@@ -169,13 +169,14 @@ describe('tuning', () => {
         var inter = 100,
             tolerance = 10,
             times = [],
-            c1 = interval(function ({ at }) {
-                times.push(at)
-            }, inter).run(({ i }) => {
+            c1 = interval(function () {
+                var t = +new Date;
+                times.push(t)
+            }, inter).run(inst => {
                 setTimeout(function () {
                     c1.end();
-                    for (var j = 0, l = times.length; j < l - 1; j++) {
-                        assert.equal(times[j + 1] - times[j] - inter < tolerance, true);
+                    for (var i = 0, l = times.length; i < l - 1; i++) {
+                        assert.equal(times[i + 1] - times[i] - inter < tolerance, true);
                     }
                     done()
                 }, 1000);
@@ -191,15 +192,15 @@ describe('tuning', () => {
             c1 = interval(() => {}, step)
                 .endsIn(targetEnd)
                 .onTune(() => {updated = true;})
-                .onEnd(({ at }) => {
-                    end = at;
+                .onEnd(() => {
+                    end = +new Date();
                     var elapsed = end - start;
                     
                     // some tolerance
                     assert.ok(elapsed > 1200);
                     assert.ok(updated);
                 })
-                .run(({ at }) => {start = at;});
+                .run(() => {start = +new Date();});
 
         setTimeout(function () {
             c1.tune(tuning);
@@ -210,6 +211,7 @@ describe('tuning', () => {
 
 describe('edge cases', () => {
     it('when indefinite - tune is identity', () => {
+
         var tolerance = 0.01,
             attemptTuneAt = 200,
             endAt = 300,
@@ -217,14 +219,14 @@ describe('edge cases', () => {
             updated = false,
             start, end;
         interval(() => {}, step)
-            .run(({ at }) => {
-                start = at;
+            .run(() => {
+                start = +new Date();
             })
-            .at(attemptTuneAt, ({ i }) => i.tune(200))
-            .at(endAt, ({ i }) => i.end())
+            .at(attemptTuneAt, ({ instance }) => instance.tune(200))
+            .at(endAt, ({ instance }) => instance.end())
             .onTune(() => { updated = true; })
-            .onEnd(({ at }) => {
-                end = at;
+            .onEnd(() => {
+                end = +new Date();
                 var elapsed = end - start;
                 
                 // some tolerance
@@ -233,8 +235,8 @@ describe('edge cases', () => {
                 assert.ok(updated === false);
             });
     });
-
     it('onStart through run wins', () => {
+
         var endAt = 300,
             step = 100,
             starter;
@@ -242,7 +244,7 @@ describe('edge cases', () => {
             .run(() => {
                 starter = starter || 'run';
             })
-            .at(endAt, ({ i }) => i.end())
+            .at(endAt, ({ instance }) => instance.end())
             .onStart(() => { starter = starter || 'start' })
             .onEnd(() => {
                 assert.ok(starter === 'run');
