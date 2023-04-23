@@ -1,5 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)  
-# interval <sub><small>(v. 1.0.32)</small></sub>
+# interval <sub><small>(v. 1.0.33)</small></sub>
 
 A really simple tool meant to replace `setInterval`  
 primarily providing a stable interval execution, moreover can be paused and resumed
@@ -59,10 +59,10 @@ var interval = require('../source/index'),
     start, end;
 interval(function ({ cycle, elapsed, effective, progress, remaining }) {
     console.log(JSON.stringify({ cycle, remaining, elapsed, effective, progress }));
-}, 20)
+}, 50)
     .onStart(({ at }) => console.log(`start 1 (${at})`))
     .onStart(({ at }) => console.log(`start 2, add more really needed (same at ${at})`))
-    .onTune(() => console.log('tuning'))
+    .onTune(({ at }) => console.log(`tuning at ${at}`))
     .onPause(({ elapsed, effective }) => console.log('pausing', { elapsed, effective }))
     .onResume(({ elapsed, effective }) => console.log('resuming', { elapsed, effective }))
     .onEnd(function ({ progress }) {
@@ -85,31 +85,50 @@ interval(function ({ cycle, elapsed, effective, progress, remaining }) {
 and the output is similar to
 
 ``` 
-The start
-start 1
-{ cycle: 0, elapsed: 63, effective: 63, progress: 6.3 }
-{ cycle: 1, elapsed: 102, effective: 102, progress: 10.2 }
-{ cycle: 2, elapsed: 150, effective: 150, progress: 15 }
-{ cycle: 3, elapsed: 200, effective: 200, progress: 20 }
-pausing { elapsed: 242, effective: 242 }
-resuming { elapsed: 441, effective: 244 }
-{ cycle: 5, elapsed: 450, effective: 253, progress: 25.3 }
-{ cycle: 6, elapsed: 500, effective: 303, progress: 30.3 }
-{ cycle: 7, elapsed: 551, effective: 354, progress: 35.4 }
-{ cycle: 8, elapsed: 601, effective: 404, progress: 40.4 }
-updating { elapsed: 612, effective: 415 }
-{ cycle: 9, elapsed: 651, effective: 454, progress: 41.843 }
-{ cycle: 10, elapsed: 700, effective: 503, progress: 46.359 }
-{ cycle: 11, elapsed: 750, effective: 553, progress: 50.968 }
-{ cycle: 12, elapsed: 801, effective: 604, progress: 55.668 }
-pausing { elapsed: 842, effective: 645 }
-resuming { elapsed: 1042, effective: 845 }
-{ cycle: 13, elapsed: 1050, effective: 853, progress: 78.618 }
-{ cycle: 14, elapsed: 1101, effective: 904, progress: 83.318 }
-{ cycle: 15, elapsed: 1156, effective: 959, progress: 88.387 }
-{ cycle: 16, elapsed: 1201, effective: 1004, progress: 92.535 }
-{ cycle: 17, elapsed: 1252, effective: 1055, progress: 97.235 }
-Ended in 1272 ms
+The very first start, wins over others onStart
+start 1 (1682288747176)
+start 2, add more really needed (same at 1682288747176)
+{"cycle":0,"remaining":939,"elapsed":61,"effective":61,"progress":6.1}
+{"cycle":1,"remaining":899,"elapsed":101,"effective":101,"progress":10.1}
+{"cycle":2,"remaining":849,"elapsed":151,"effective":151,"progress":15.1}
+{"cycle":3,"remaining":799,"elapsed":201,"effective":201,"progress":20.1}
+pausing { elapsed: 230, effective: 230 }
+resuming { elapsed: 431, effective: 431 }
+{"cycle":5,"remaining":749,"elapsed":450,"effective":251,"progress":25.1}
+{"cycle":6,"remaining":699,"elapsed":500,"effective":301,"progress":30.1}
+{"cycle":7,"remaining":648,"elapsed":551,"effective":352,"progress":35.2}
+tuning at 1682288747777
+{"cycle":8,"remaining":1198,"elapsed":601,"effective":402,"progress":25.125}
+{"cycle":9,"remaining":1148,"elapsed":651,"effective":452,"progress":28.25}
+{"cycle":10,"remaining":1099,"elapsed":700,"effective":501,"progress":31.313}
+{"cycle":11,"remaining":1048,"elapsed":751,"effective":552,"progress":34.5}
+{"cycle":12,"remaining":998,"elapsed":801,"effective":602,"progress":37.625}
+{"cycle":13,"remaining":949,"elapsed":850,"effective":651,"progress":40.688}
+tuning at 1682288748077
+{"cycle":14,"remaining":1398,"elapsed":901,"effective":702,"progress":33.429}
+{"cycle":15,"remaining":1348,"elapsed":951,"effective":752,"progress":35.81}
+{"cycle":16,"remaining":1299,"elapsed":1000,"effective":801,"progress":38.143}
+tuning at 1682288748227
+{"cycle":17,"remaining":948,"elapsed":1051,"effective":852,"progress":47.333}
+{"cycle":18,"remaining":898,"elapsed":1101,"effective":902,"progress":50.111}
+{"cycle":19,"remaining":848,"elapsed":1151,"effective":952,"progress":52.889}
+{"cycle":20,"remaining":798,"elapsed":1201,"effective":1002,"progress":55.667}
+{"cycle":21,"remaining":749,"elapsed":1250,"effective":1051,"progress":58.389}
+{"cycle":22,"remaining":698,"elapsed":1301,"effective":1102,"progress":61.222}
+{"cycle":23,"remaining":649,"elapsed":1350,"effective":1151,"progress":63.944}
+{"cycle":24,"remaining":598,"elapsed":1401,"effective":1202,"progress":66.778}
+{"cycle":25,"remaining":548,"elapsed":1451,"effective":1252,"progress":69.556}
+{"cycle":26,"remaining":498,"elapsed":1501,"effective":1302,"progress":72.333}
+{"cycle":27,"remaining":448,"elapsed":1551,"effective":1352,"progress":75.111}
+{"cycle":28,"remaining":398,"elapsed":1601,"effective":1402,"progress":77.889}
+{"cycle":29,"remaining":346,"elapsed":1653,"effective":1454,"progress":80.778}
+{"cycle":30,"remaining":295,"elapsed":1704,"effective":1505,"progress":83.611}
+{"cycle":31,"remaining":249,"elapsed":1750,"effective":1551,"progress":86.167}
+{"cycle":32,"remaining":198,"elapsed":1801,"effective":1602,"progress":89}
+{"cycle":33,"remaining":148,"elapsed":1851,"effective":1652,"progress":91.778}
+{"cycle":34,"remaining":99,"elapsed":1900,"effective":1701,"progress":94.5}
+{"cycle":35,"remaining":48,"elapsed":1951,"effective":1752,"progress":97.333}
+Ended in 2000 ms (100%)
 ```
 
 
