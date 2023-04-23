@@ -128,7 +128,7 @@ _**some info**_ consists in a object containing:
 ## Sliding pauses  
 This thing applies **only in case** the end of the interval is defined, thus only when `endsIn` is invoked.
 
-![100runs](https://raw.githubusercontent.com/fedeghe/interval/master/schema-slide.png)  
+![100runs](https://raw.githubusercontent.com/fedeghe/interval/master/schema-slide.jpeg)  
 
 here the end is set `endsIn`, then we trigger two different pauses:  
 - **a sliding pause**:  
