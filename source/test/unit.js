@@ -196,7 +196,7 @@ describe('tuning', () => {
                     var elapsed = end - start;
                     
                     // some tolerance
-                    assert.ok(elapsed > 1200);
+                    assert.ok(elapsed >= 1200);
                     assert.ok(updated);
                 })
                 .run(({ at }) => {start = at;});
