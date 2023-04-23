@@ -1,5 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)  
-# interval <sub><small>(v. 1.0.30)</small></sub>
+# interval <sub><small>(v. 1.0.31)</small></sub>
 
 A really simple tool meant to replace `setInterval`  
 primarily providing a stable interval execution, moreover can be paused and resumed
@@ -8,127 +8,156 @@ install
 ``` shell
 > yarn add @fedeghe/interval 
 ```
-import 
+import & use as `setInterval` (this will not diverge)
 ``` js
 const interval = require('@fedeghe/interval')
-```
 
-use 
-``` js
 interval(
-    ({ cycle }) => console.log(`cycle #${cycle} (${+new Date()})`),
+    ({ cycle, at }) => console.log(`cycle #${cycle} (${at})`),
     100
 ).run()
 ```
-but something more is possible:
+but we can for example plan the end and hook a function there:
 ``` js
-var intr = interval(
-        ({ cycle }) => console.log(`cycle #${cycle} (${+new Date()})`),
-        100
-    )
-    .onEnd(() => console.log(`ENDED at ${+new Date()}`))
-    .run(() => console.log(`STARTED at ${+new Date()}`));
+interval(
+    ({ cycle, at }) => console.log(`cycle #${cycle}: (${at})`),
+    100
+)
+.endsIn(1e3).onEnd(() => console.log(`ENDED at ${+new Date()}`))
+.run(() => console.log(`STARTED at ${+new Date()}`));
 
-// force shut down after 1 second
-setTimeout(function () {
-    intr.end();
-}, 1e3);
-```
-same thing can be rewritten as 
-```js
-interval(({ cycle }) => console.log(`run #${cycle}: ${+new Date}`), 1e2)
-    .onEnd(() => console.log(`ENDED at ${+new Date()}`))
-    .run(inst => {
-        console.log(`STARTED at ${+new Date()}`)
-        setTimeout(()=> inst.end(), 1e3);
-    });
-```
-or
-``` js
-interval(({ cycle }) => console.log(`run #${cycle}: ${+new Date}`), 1e2)
-    .onEnd(() => console.log(`ENDED at ${+new Date()}`))
-    .endsIn(1e3)
-    .run(console.log(`STARTED at ${+new Date()}`));
 ```
 
-will produce
+getting
 
 ```
 STARTED at 1679946525631
-run #0: 1679946525738 // distance from target : 7
-run #1: 1679946525831 // " 0
-run #2: 1679946525932 // " 1
-run #3: 1679946526031 // " 0
-run #4: 1679946526132 // " 0
-run #5: 1679946526232 // " 0
-run #6: 1679946526332 // " 0
-run #7: 1679946526431 // " 1
-run #8: 1679946526532 // " 0
-run #9: 1679946526633 // " 1
+cycle #0: 1679946525738 // distance from target : 7
+cycle #1: 1679946525831 // " 0
+cycle #2: 1679946525932 // " 1
+cycle #3: 1679946526031 // " 0
+cycle #4: 1679946526132 // " 0
+cycle #5: 1679946526232 // " 0
+cycle #6: 1679946526332 // " 0
+cycle #7: 1679946526431 // " 1
+cycle #8: 1679946526532 // " 0
+cycle #9: 1679946526633 // " 1
 ENDED at 1679946526637   // end 6
 ```
-as You can see the distance between each contiguous allows some more stability compared to the analogous `setInterval` version:
+as You can see the distance between each contiguous is quite good.
 
-``` js
-var clear = setInterval(function () {
-    console.log(+new Date)
-}, 100);
+**IMPORTANT**: when using `endsIn` to set the interval horizont be sure to invoke `run` **after** and  not **before** `endsIn`
 
-// even now shout down after one second
-setTimeout(function () { clearInterval(clear); }, 1000);
+more examples:
+
+
+<details>
+<summary>here is an less trial example whcih tries to use almost all available methods</summary>
+
+``` js  
+var interval = require('../source/index'),
+    start, end;
+interval(function ({ cycle, elapsed, effective, progress, remaining }) {
+    console.log(JSON.stringify({ cycle, remaining, elapsed, effective, progress }));
+}, 20)
+    .onStart(({ at }) => console.log(`start 1 (${at})`))
+    .onStart(({ at }) => console.log(`start 2, add more really needed (same at ${at})`))
+    .onTune(() => console.log('tuning'))
+    .onPause(({ elapsed, effective }) => console.log('pausing', { elapsed, effective }))
+    .onResume(({ elapsed, effective }) => console.log('resuming', { elapsed, effective }))
+    .onEnd(function ({ progress }) {
+        end = +new Date();
+        console.log(`Ended in ${end - start} ms (${progress}%)`);
+    })
+    .at(230, ({ i }) => i.pause(true))
+    .at(430, ({ i }) => i.resume())
+    .at(600, ({ i }) => i.tune(600))
+    .at(900, ({ i }) => i.tune(500))
+    .at(1050, ({ i }) => i.tune(-300))
+    .endsIn(1000)
+    .run(({ at }) => {
+        start = at;
+        console.log('The very first start, wins over others onStart');
+    });
+
 ```
-which produce instead something similar to; ran on firefox which seem to have a really bad divergence:
+
+and the output is similar to
+
+``` 
+The start
+start 1
+{ cycle: 0, elapsed: 63, effective: 63, progress: 6.3 }
+{ cycle: 1, elapsed: 102, effective: 102, progress: 10.2 }
+{ cycle: 2, elapsed: 150, effective: 150, progress: 15 }
+{ cycle: 3, elapsed: 200, effective: 200, progress: 20 }
+pausing { elapsed: 242, effective: 242 }
+resuming { elapsed: 441, effective: 244 }
+{ cycle: 5, elapsed: 450, effective: 253, progress: 25.3 }
+{ cycle: 6, elapsed: 500, effective: 303, progress: 30.3 }
+{ cycle: 7, elapsed: 551, effective: 354, progress: 35.4 }
+{ cycle: 8, elapsed: 601, effective: 404, progress: 40.4 }
+updating { elapsed: 612, effective: 415 }
+{ cycle: 9, elapsed: 651, effective: 454, progress: 41.843 }
+{ cycle: 10, elapsed: 700, effective: 503, progress: 46.359 }
+{ cycle: 11, elapsed: 750, effective: 553, progress: 50.968 }
+{ cycle: 12, elapsed: 801, effective: 604, progress: 55.668 }
+pausing { elapsed: 842, effective: 645 }
+resuming { elapsed: 1042, effective: 845 }
+{ cycle: 13, elapsed: 1050, effective: 853, progress: 78.618 }
+{ cycle: 14, elapsed: 1101, effective: 904, progress: 83.318 }
+{ cycle: 15, elapsed: 1156, effective: 959, progress: 88.387 }
+{ cycle: 16, elapsed: 1201, effective: 1004, progress: 92.535 }
+{ cycle: 17, elapsed: 1252, effective: 1055, progress: 97.235 }
+Ended in 1272 ms
 ```
-1562049640169
-1562049640269 // dist from wanted: 0
-1562049640371 // " 2
-1562049640475 // " 6
-1562049640576 // " 7
-1562049640678 // " 8
-1562049640784 // " 15
-1562049640884 // " 15
-1562049640988 // " 19
-```
+
+
+</details>
+
+---
+
 ### _API_
-the `interval` function returns an instance of a simple object where the following methods are available:
-- **run(ƒn)** to start it, optionally accepts a function that will be called once started passing _**some info**_
-- **end()** to force a stop manually
-- **endsIn(ms)** to plan a stop after ms milliseconds
-- **pause(_slide_)**  
+- **`interval(ticking ƒn, tick)`**:  
+ needs a _ticking_ function that will be executed every _tick_ ms; returns an _interval_ instance where the following methods are available:
+- **`run(ƒn)`** to start it, optionally accepts a function that will be called once started passing _**some info**_
+- **`endsIn(ms)`** to plan a stop after ms milliseconds
+- **`end()` meant to be called in `.at`** to force a stop manually  
+- **`pause(_slide_)` meant to be called in `.at`**  
     - to pause it manually (by just pause interval execution; do not delays the end maybe booked with `endsIn`)  
     -  in case the pause needs to move the planned end accordingly (set with _endsIn()_) then pass `true` when invoking that function. 
-- **resume()** to resume it manually  
-- **update(number)** when endsIn is used, live add (positive number) or remove (negative number) `number` milliseconds to the event horizont; clearly enough if one removed more than the remainder the interval will stop immediately.     
-- **getStatus()** get _**some info**_    
+- **`resume()` meant to be called in `.at`** to resume it manually from a pause  
+- **`tune(ms)` meant to be called in `.at`, require `endsIn`**  
+    live add or remove `ms` milliseconds to the event horizont depending on the sign; clearly enough if one removed more than the remainder the interval will stop immediately.     
+- **`at(ms, ƒn)`** after `ms` milliseconds execute `ƒn` passing _**some info**_     
+- **`getStatus()`** get _**some info**_    
 
-few hooks, u can set one or more function for each of the following:
-- **onErr(fn)** to pass a function that will handle any thrown err; _fn_ will be invoked receiving `{error, instance}`
-- **onEnd(fn)** to pass a function that will be called when `end` will be called; _fn_ will be invoked receiving _**some info**_  
-- **onStart(fn)** to pass a function that will be called when `run` will be called; _fn_ will be invoked receiving `{instance}`
-- **onPause(fn)** to pass a function that will be called when `pause` will be called; _fn_ will be invoked receiving _**some info**_ 
-- **onResume(fn)** to pass a function that will be called when `resume` will be called; _fn_ will be invoked receiving _**some info**_  
-- **onUpdate(fn)** to pass a function that will be called when `updater` will be called; _fn_ will be invoked receiving _**some info**_  
+then few hooks are available to observe relevant events:
+- **`onErr(ƒn)`** to pass a function that will handle any thrown err; _ƒn_ will be invoked receiving `{error, i}` (where `i` is the interval instance)
+- **`onEnd(ƒn)`** to pass a function that will be called when `end` will be called; _ƒn_ will be invoked receiving _**some info**_  
+- **`onStart(ƒn, _first_)`** to pass a function that will be called when `run` will be called; _ƒn_ will be invoked receiving _**some info**_; optionally one can pass `true` as second parameter so this will become the first function invoked at _start_.
+- **`onPause(ƒn)`** to pass a function that will be called when `pause` will be called; _ƒn_ will be invoked receiving _**some info**_ 
+- **`onResume(ƒn)`** to pass a function that will be called when `resume` will be called; _ƒn_ will be invoked receiving _**some info**_  
+- **`onTune(ƒn)`** to pass a function that will be called when `tune` will be called; _ƒn_ will be invoked receiving _**some info**_ with additionally `ms` 
 
 _**some info**_ consists in a object containing: 
+- **`at`**: the epoch of the event 
 - **`cycle`**: an integer containing the currect cycle of notification 
 - **`elapsed`**: the elapsed time (pauses included)   
 - **`effective`**: the elapsed time (pauses excluded)
 - **`remaining`**: the remaining time
 - **`progress`**: the progress percentage (float, precision 3)
+- **`status`**: the status of the instance among `['init', 'running', 'paused', 'ended', 'error']`
 
 ## Sliding pauses  
-This thing applies **only** in the case one sets the end of the interval, thus only when `endsIn` is invoked.
-```
-                  P1     P1         P2                PLANNED      SLIDED
-       start      pause  resume     pause                 END      END
-         v        v      v          v                       v      v          
-running  |-----|--o      .-|-----|--.            .-|-----|--E--|---E-|----->
- paused  |        '--|---'          '..|.....|...'
- ticks   |-----T-----T-----T-----T-----T-----T-----T-----T-----T-----T----->
-```
-here the end is set to be E invoking `endsIn(E)`, the we trigger two different pauses:  
-- **P1 sliding pause**; pauses the ticking notifications until not resumed, assuming it will last for and amount of time equal to TP1 the planned end `E` will be `E + TP1`. Still need sto be resumed before the the planned END, otherwise the planned end will not be updated.
-- **P2 default pause**; it just pauses the ticking notifications without updating the planned end.
+This thing applies **only in case** the end of the interval is defined, thus only when `endsIn` is invoked.
+
+![100runs](https://raw.githubusercontent.com/fedeghe/interval/master/schema-slide.jpeg)  
+
+here the end is set `endsIn`, then we trigger two different pauses:  
+- **a sliding pause**:  
+     pauses the ticking notifications until not resumed, assuming it will last for an amount of time equal to `TP1` the planned end will be slided forward accounting it.
+- **a default pause**; it just pauses the ticking notifications without updating the planned end.
 
 ## Why? ... just cause `setInterval` is badly divergent!  
 I tried some environments and looks like all shows time warping (+) to some extent.  
@@ -139,12 +168,13 @@ Using an interval of 100ms for example the incident occurs already at the **30th
 you can try it by yoursef in your node environment simply running:  
 
 ```
-yarn compare 200 // for example, or passing any integer interval in ms
-                 // ...you have to stop it manually (+c)
+> yarn compare 200
+// for example, or passing any integer interval in ms
+// you have to stop it manually (+c) or wait one hour 🤣
 ```
 
 <details>
-<summary>here us can see the `compare` script</summary>
+<summary>here you can see the `compare` script</summary>
 
 ``` js  
 let args = process.argv.slice(2),
