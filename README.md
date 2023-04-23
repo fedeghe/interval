@@ -1,5 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)  
-# interval <sub><small>(v. 1.0.31)</small></sub>
+# interval <sub><small>(v. 1.0.32)</small></sub>
 
 A really simple tool meant to replace `setInterval`  
 primarily providing a stable interval execution, moreover can be paused and resumed
@@ -152,7 +152,7 @@ _**some info**_ consists in a object containing:
 ## Sliding pauses  
 This thing applies **only in case** the end of the interval is defined, thus only when `endsIn` is invoked.
 
-![100runs](https://raw.githubusercontent.com/fedeghe/interval/master/schema-slide.jpeg)  
+![100runs](https://raw.githubusercontent.com/fedeghe/interval/master/schema-slide.png)  
 
 here the end is set `endsIn`, then we trigger two different pauses:  
 - **a sliding pause**:  
