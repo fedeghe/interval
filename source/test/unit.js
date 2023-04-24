@@ -248,4 +248,47 @@ describe('edge cases', () => {
                 assert.ok(starter === 'run');
             });
     });
+
+    it('if undefinite, pause(true) is as pause', ( done ) => {
+        var s1, t1,
+            s2, t2,
+            endAfter = 1000,
+            step = 50;
+        interval(() => {}, step)
+            .run(({ at }) => { s1 = at; })
+            .at(200, ({ i }) => i.pause(true))
+            .at(400, ({ i }) => i.resume())
+            .at(endAfter, ({ i }) => i.end())
+            .onEnd(({ at }) => { t1 = at - s1; });
+        interval(() => {}, step)
+            .run(({ at }) => { s2 = at; })
+            .at(200, ({ i }) => i.pause())
+            .at(400, ({ i }) => i.resume())
+            .at(endAfter, ({ i }) => i.end())
+            .onEnd(({ at }) => { t2 = at - s2; });
+        setTimeout(() => {
+            assert.ok(Math.abs(t1 - t2) < 5)
+            done();
+        }, endAfter + 10)
+    });
+
+    it('if undefinite, tune() has no effect, different way', ( done ) => {
+        var s1, t1,
+            s2, t2,
+            endAfter = 1000,
+            step = 50;
+        interval(() => {}, step)
+            .run(({ at }) => { s1 = at; })
+            .at(200, ({ i }) => i.tune(5000))
+            .at(endAfter, ({ i }) => i.end())
+            .onEnd(({ at }) => { t1 = at - s1; });
+        interval(() => {}, step)
+            .run(({ at }) => { s2 = at; })
+            .at(endAfter, ({ i }) => i.end())
+            .onEnd(({ at }) => { t2 = at - s2; });
+        setTimeout(() => {
+            assert.ok(Math.abs(t1 - t2) < 5)
+            done();
+        }, endAfter + 10)
+    });
 });

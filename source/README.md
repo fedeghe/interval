@@ -1,19 +1,19 @@
 [![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)  
 # interval <sub><small>(v. $PACKAGE.version$)</small></sub>
 
-A really simple tool meant to replace `setInterval`  
-primarily providing a stable interval execution, moreover can be paused and resumed
+A really simple tool meant to replace `setInterval`.  
+It provides a stable interval execution and introduces some additional functionalities.
 
 install
 ``` shell
 > yarn add @fedeghe/interval 
 ```
-import & use as `setInterval` (this will not diverge)
+import and use basically as `setInterval` 
 ``` js
 const interval = require('@fedeghe/interval')
 
 interval(
-    ({ cycle, at }) => console.log(`cycle #${cycle} (${at})`),
+    ({ cycle, at }) => console.log(`cycle #${cycle} ${at}`),
     100
 ).run()
 ```
@@ -23,8 +23,9 @@ interval(
     ({ cycle, at }) => console.log(`cycle #${cycle}: (${at})`),
     100
 )
-.endsIn(1e3).onEnd(() => console.log(`ENDED at ${+new Date()}`))
-.run(() => console.log(`STARTED at ${+new Date()}`));
+.endsIn(1e3)
+.onEnd(({ at }) => console.log(`ENDED at ${at}`))
+.run(({ at }) => console.log(`STARTED at ${at}`));
 
 ```
 
@@ -44,7 +45,7 @@ cycle #8: 1679946526532 // " 0
 cycle #9: 1679946526633 // " 1
 ENDED at 1679946526637   // end 6
 ```
-as You can see the distance between each contiguous is quite good.
+as You can see the distance between each contiguous tick is quite good, but more importantly ont the long run it does nto diverge.
 
 **IMPORTANT**: when using `endsIn` to set the interval horizont be sure to invoke `run` **after** and  not **before** `endsIn`
 
@@ -52,7 +53,7 @@ more examples:
 
 
 <details>
-<summary>here is an less trial example whcih tries to use almost all available methods</summary>
+<summary>here is an less trial example which tries to use almost all available methods</summary>
 
 ``` js  
 $$./../check/index7.js$$
@@ -113,17 +114,19 @@ Ended in 2000 ms (100%)
 ---
 
 ### _API_
-- **`interval(ticking ƒn, tick)`**:  
- needs a _ticking_ function that will be executed every _tick_ ms; returns an _interval_ instance where the following methods are available:
-- **`run(ƒn)`** to start it, optionally accepts a function that will be called once started passing _**some info**_
-- **`endsIn(ms)`** to plan a stop after ms milliseconds
-- **`end()` meant to be called in `.at`** to force a stop manually  
+**`interval(ticking ƒn, tick)`**  
+requires a _ticking_ function and _ms_ integer to know the execution period: ƒn will be invoked every _ms_ milliseconds;  
+ returns an _interval_ instance where the following methods are available:
+
+- **`run(ƒn)`** to start it, optionally accepts a function that will be called once started passing to it _**some info**_
+- **`endsIn(ms)`** to plan a stop after _ms_ milliseconds
+- **`end()` meant to be called in `.at`** to force a stop  
 - **`pause(_slide_)` meant to be called in `.at`**  
-    - to pause it manually (by just pause interval execution; do not delays the end maybe booked with `endsIn`)  
-    -  in case the pause needs to move the planned end accordingly (set with _endsIn()_) then pass `true` when invoking that function. 
+    - invoke it with no parameter to just pause the ticking notifications  
+    - pass `true` when invoking it to pause the notifications and to move forward the planned end accordingly; in case the interval does not have a planned end then the _slide_ parameter will have no effect. 
 - **`resume()` meant to be called in `.at`** to resume it manually from a pause  
 - **`tune(ms)` meant to be called in `.at`, require `endsIn`**  
-    live add or remove `ms` milliseconds to the event horizont depending on the sign; clearly enough if one removed more than the remainder the interval will stop immediately.     
+    live add or remove `ms` milliseconds to the event horizont depending on the sign; clearly enough if one removed more than the remainder the interval will stop immediately; in case the interval does not have a planned end then the `tune` has no effect.     
 - **`at(ms, ƒn)`** after `ms` milliseconds execute `ƒn` passing _**some info**_     
 - **`getStatus()`** get _**some info**_    
 
@@ -131,9 +134,9 @@ then few hooks are available to observe relevant events:
 - **`onErr(ƒn)`** to pass a function that will handle any thrown err; _ƒn_ will be invoked receiving `{error, i}` (where `i` is the interval instance)
 - **`onEnd(ƒn)`** to pass a function that will be called when `end` will be called; _ƒn_ will be invoked receiving _**some info**_  
 - **`onStart(ƒn, _first_)`** to pass a function that will be called when `run` will be called; _ƒn_ will be invoked receiving _**some info**_; optionally one can pass `true` as second parameter so this will become the first function invoked at _start_.
-- **`onPause(ƒn)`** to pass a function that will be called when `pause` will be called; _ƒn_ will be invoked receiving _**some info**_ 
-- **`onResume(ƒn)`** to pass a function that will be called when `resume` will be called; _ƒn_ will be invoked receiving _**some info**_  
-- **`onTune(ƒn)`** to pass a function that will be called when `tune` will be called; _ƒn_ will be invoked receiving _**some info**_ with additionally `ms` 
+- **`onPause(ƒn)`** to pass a function that will be called when `pause` is called; _ƒn_ will be invoked receiving _**some info**_ 
+- **`onResume(ƒn)`** to pass a function that will be called when `resume` is called; _ƒn_ will be invoked receiving _**some info**_  
+- **`onTune(ƒn)`** to pass a function that will be called when `tune` is called; _ƒn_ will be invoked receiving _**some info**_ with additionally `ms` 
 
 _**some info**_ consists in a object containing: 
 - **`at`**: the epoch of the event 
@@ -145,14 +148,14 @@ _**some info**_ consists in a object containing:
 - **`status`**: the status of the instance among `['init', 'running', 'paused', 'ended', 'error']`
 
 ## Sliding pauses  
-This thing applies **only in case** the end of the interval is defined, thus only when `endsIn` is invoked.
+Sliding pauses make sense **only in case** the end of the interval is defined, thus only when `endsIn` is invoked.
 
 ![100runs](https://raw.githubusercontent.com/fedeghe/interval/master/schema-slide.jpeg)  
 
-here the end is set `endsIn`, then we trigger two different pauses:  
+here the end is set calling `endsIn`, then we trigger two different pauses:  
 - **a sliding pause**:  
-     pauses the ticking notifications until not resumed, assuming it will last for an amount of time equal to `TP1` the planned end will be slided forward accounting it.
-- **a default pause**; it just pauses the ticking notifications without updating the planned end.
+     pauses the ticking notifications until resumed, assuming the pause lasts for `TP1` ms the planned end will be slided forward accounting it.
+- **a default pause**: it just pauses the ticking notifications without updating the planned end.
 
 ## Why? ... just cause `setInterval` is badly divergent!  
 I tried some environments and looks like all shows time warping (+) to some extent.  
