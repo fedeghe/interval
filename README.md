@@ -1,5 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)  
-# interval <sub><small>(v. 1.0.36)</small></sub>
+# interval <sub><small>(v. 1.0.37)</small></sub>
 
 A really simple tool meant to replace `setInterval`.  
 It provides a stable interval execution and introduces some additional functionalities.
