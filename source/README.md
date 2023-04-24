@@ -53,7 +53,7 @@ more examples:
 
 
 <details>
-<summary>here is an less trial example which tries to use almost all available methods</summary>
+<summary>here is a less trivial example using almost all available methods</summary>
 
 ``` js  
 $$./../check/index7.js$$

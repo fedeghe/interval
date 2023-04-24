@@ -1,5 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)  
-# interval <sub><small>(v. 1.0.34)</small></sub>
+# interval <sub><small>(v. 1.0.35)</small></sub>
 
 A really simple tool meant to replace `setInterval`.  
 It provides a stable interval execution and introduces some additional functionalities.
@@ -53,7 +53,7 @@ more examples:
 
 
 <details>
-<summary>here is an less trial example which tries to use almost all available methods</summary>
+<summary>here is a less trivial example using almost all available methods</summary>
 
 ``` js  
 var interval = require('../source/index'),
