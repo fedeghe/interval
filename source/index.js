@@ -6,6 +6,11 @@ var interval = (function () {
         instance.subscribers[which].forEach(
             function (subscriber) { subscriber(Object.assign({}, params, { i: instance })); }
         );
+        if (which === 'err') shutdown(instance);
+    }
+    function shutdown (self) {
+        clearTimeout(self.tickerTo);
+        clearTimeout(self.finalTo);
     }
 
     function getInfo (self, theEnd) {
@@ -144,7 +149,6 @@ var interval = (function () {
         }
 
         this.tickerTo = setTimeout(function () {
-            if (['ended', 'error'].includes(self.status)) return self;
             var info = getInfo(self);
             try {
                 self.status === 'running' && runHooks(self, 'tick', info);
@@ -192,6 +196,7 @@ var interval = (function () {
 
     Interval.prototype.end = function () {
         this.status = 'ended';
+        shutdown(this);
         runHooks(this, 'end', getInfo(this, true));
         return this;
     };
