@@ -7,3 +7,4 @@
 .buildNum.json
 .coveralls.yml
 .nycrc.json
+.DS_Store
