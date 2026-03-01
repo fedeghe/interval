@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/fedeghe/interval/badge.svg?branch=master)](https://coveralls.io/github/fedeghe/interval?branch=master)  
+[![codecov](https://codecov.io/gh/fedeghe/interval/graph/badge.svg?token=r4yGl0ffxS)](https://codecov.io/gh/fedeghe/interval) ![Static Badge](https://img.shields.io/badge/Human%20coded-100%25-blue?style=plastic)
 # interval <sub><small>(v. $PACKAGE.version$)</small></sub>
 
 A really simple tool meant to replace `setInterval`.  

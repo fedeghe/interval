@@ -1,9 +1,9 @@
 {
     "EXE": [
-        "rm -rf dist test",
-        "mkdir dist test"
+        "rm -rf dist tests",
+        "mkdir dist tests"
     ],
-    "source/index.js": "dist -plugins=malta-js-uglify...malta-header-comment[name:\"source/header.txt\"]...malta-mocha -options=verbose:2",
-    "source/test/unit.js": "test -plugins=malta-mocha",
+    "source/index.js": "dist -plugins=malta-js-uglify...malta-header-comment[name:\"source/header.txt\"]...malta-jest[argz:'--rootDir=.'] -options=verbose:2",
+    "source/tests/unit.js": "tests -plugins=malta-jest[argz:'--rootDir=.']",
     "source/README.md": ". -options=showPath:false"
 }

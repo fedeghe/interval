@@ -9,7 +9,7 @@ yarn.lock
 /.git
 /.nyc_output
 /coverage
-/test
+/tests
 /source
 /node_modules
 /compare

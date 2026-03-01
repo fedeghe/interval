@@ -1,5 +1,4 @@
-var assert = require('assert'),
-    interval = require('../dist/index.js');
+var interval = require('../dist/index.js');
 
 describe('basic operations', () => {
     it('should converge and run onStart (1s run with 100ms interval, 10ms tolerance)', done => {
@@ -13,7 +12,7 @@ describe('basic operations', () => {
                 setTimeout(function () {
                     c1.end();
                     for (var i = 0, l = times.length; i < l - 1; i++) {
-                        assert.equal(times[i + 1] - times[i] - inter < tolerance, true);
+                        expect(times[i + 1] - times[i] - inter < tolerance).toBe(true);
                     }
                     done()
                 }, 1000);
@@ -30,12 +29,12 @@ describe('basic operations', () => {
         setTimeout(function () {
             c1.end();
             for (var i = 0, l = times.length; i < l - 1; i++) {
-                assert.equal(times[i + 1] - times[i] - inter < tolerance, true);
+                expect(times[i + 1] - times[i] - inter < tolerance).toBe(true);
             }
             done()
         }, 10000);
-    }).timeout(15000);
-    it('should throw an exception, and handle it', () => {
+    }, 15000);
+    it('should throw an exception, and handle it', done => {
         var i = 0,
             t = 0;
         interval(function () {
@@ -44,8 +43,9 @@ describe('basic operations', () => {
         }, 10)
         .onTick(() => {t++;})
         .onErr(function ({ error }) {
-            assert.equal(error instanceof Error, true);
-            assert.ok(t > 0);
+            expect(error instanceof Error).toBe(true);
+            expect(t > 0).toBe(true);
+            done();
         })
         .run();
     });
@@ -62,20 +62,20 @@ describe('basic operations', () => {
             i++;
         }, 10).run();
         setTimeout(function () {
-            assert.equal(i, 10);
+            expect(i).toBe(10);
             c1.pause();
         }, 105)
         setTimeout(function () {
-            assert.equal(i, 10);
+            expect(i).toBe(10);
             c1.resume();
         }, 205)
         setTimeout(function () {
-            assert.equal(i > 15, true);
+            expect(i > 15).toBe(true);
             c1.end();
             done()
         }, 305)
     });
-    it('should pause and resume - with eventhook', () => {
+    it('should pause and resume - with eventhook', done => {
         var i = 0,
             hasPaused = false,
             hasResumed = false,
@@ -84,22 +84,21 @@ describe('basic operations', () => {
                 }, 10)
                 .endsIn(300)
                 .onEnd(() => {
-                
-                    assert.ok(i >= 18 && i <= 22);
-                    assert.ok(hasPaused);
-                    assert.ok(hasResumed);
-                    
+                    expect(i >= 18 && i <= 22).toBe(true);
+                    expect(hasPaused).toBe(true);
+                    expect(hasResumed).toBe(true);
+                    done();
                 })
                 .onPause(() => {hasPaused = true;})
                 .onResume(() => {hasResumed = true;})
                 .run();
         
         setTimeout(function () {
-            assert.ok(i >= 9 && i <= 10);
+            expect(i >= 9 && i <= 10).toBe(true);
             c1.pause();
         }, 100);
         setTimeout(function () {
-            assert.ok(i >= 9 && i <= 10);
+            expect(i >= 9 && i <= 10).toBe(true);
             c1.resume();
         }, 205);
     });
@@ -114,33 +113,32 @@ describe('basic operations', () => {
                 .endsIn(targetEnd)
                 //.endsIn(targetEnd) //trigger edge case
                 .onEnd(() => {
-                    console.log('end')
                     end = +new Date();
                     var elapsed = end - start,
                     shouldBe = targetEnd + pauseLength,
                     dist = Math.abs(elapsed - shouldBe);
                     
                     // some tolerance
-                    assert.ok(dist < step);
+                    expect(dist < step).toBe(true);
                     done()
                 })
                 .run(() => {start = +new Date();}),
                 status = c1.getStatus();
         // console.log(status)
-        assert('cycle' in status);
-        assert('elapsed' in status);
-        assert('effective' in status);
-        assert('remaining' in status);
-        assert('progress' in status);
+        expect(status).toHaveProperty('cycle');
+        expect(status).toHaveProperty('elapsed');
+        expect(status).toHaveProperty('effective');
+        expect(status).toHaveProperty('remaining');
+        expect(status).toHaveProperty('progress');
         setTimeout(function () {
             c1.pause(true);
         }, pauseAfter);
         setTimeout(function () {
             c1.resume();
         }, pauseAfter + pauseLength);
-    }).timeout(10e3);
+    }, 10e3);
 
-    it('should tune as expected', () => {
+    it('should tune as expected', done => {
         var targetEnd = 1e3,
             tuneAt = 500,
             tuning = 200,
@@ -154,8 +152,9 @@ describe('basic operations', () => {
                 var elapsed = end - start;
                 
                 // some tolerance
-                assert.ok(elapsed >= targetEnd + tuning);
-                assert.ok(tuned);
+                expect(elapsed >= targetEnd + tuning).toBe(true);
+                expect(tuned).toBe(true);
+                done();
             })
             .at(tuneAt, ({ i }) => i.tune(tuning))
             .run(() => {start = +new Date();});
@@ -175,7 +174,7 @@ describe('tuning', () => {
                 setTimeout(function () {
                     c1.end();
                     for (var j = 0, l = times.length; j < l - 1; j++) {
-                        assert.equal(times[j + 1] - times[j] - inter < tolerance, true);
+                        expect(times[j + 1] - times[j] - inter < tolerance).toBe(true);
                     }
                     done()
                 }, 1000);
@@ -183,7 +182,7 @@ describe('tuning', () => {
     });
 
 
-    it('should update as expected', () => {
+    it('should update as expected', done => {
         var targetEnd = 1e3,
             tuning = 200,
             step = 100;
@@ -196,8 +195,9 @@ describe('tuning', () => {
                     var elapsed = end - start;
                     
                     // some tolerance
-                    assert.ok(elapsed >= 1200);
-                    assert.ok(updated);
+                    expect(elapsed >= 1200).toBe(true);
+                    expect(updated).toBe(true);
+                    done();
                 })
                 .run(({ at }) => {start = at;});
 
@@ -209,7 +209,7 @@ describe('tuning', () => {
 });
 
 describe('edge cases', () => {
-    it('when indefinite - tune is identity', () => {
+    it('when indefinite - tune is identity', done => {
         var tolerance = 0.01,
             attemptTuneAt = 200,
             endAt = 300,
@@ -228,13 +228,14 @@ describe('edge cases', () => {
                 var elapsed = end - start;
                 
                 // some tolerance
-                assert.ok(elapsed > endAt * (1 - tolerance));
-                assert.ok(elapsed < endAt * (1 + tolerance));
-                assert.ok(updated === false);
+                expect(elapsed > endAt * (1 - tolerance)).toBe(true);
+                expect(elapsed < endAt * (1 + tolerance)).toBe(true);
+                expect(updated === false).toBe(true);
+                done();
             });
     });
 
-    it('onStart through run wins', () => {
+    it('onStart through run wins', done => {
         var endAt = 300,
             step = 100,
             starter;
@@ -245,7 +246,8 @@ describe('edge cases', () => {
             .at(endAt, ({ i }) => i.end())
             .onStart(() => { starter = starter || 'start' })
             .onEnd(() => {
-                assert.ok(starter === 'run');
+                expect(starter === 'run').toBe(true);
+                done();
             });
     });
 
@@ -267,7 +269,7 @@ describe('edge cases', () => {
             .at(endAfter, ({ i }) => i.end())
             .onEnd(({ at }) => { t2 = at - s2; });
         setTimeout(() => {
-            assert.ok(Math.abs(t1 - t2) < 5)
+            expect(Math.abs(t1 - t2) < 5).toBe(true)
             done();
         }, endAfter + 10)
     });
@@ -287,7 +289,7 @@ describe('edge cases', () => {
             .at(endAfter, ({ i }) => i.end())
             .onEnd(({ at }) => { t2 = at - s2; });
         setTimeout(() => {
-            assert.ok(Math.abs(t1 - t2) < 5)
+            expect(Math.abs(t1 - t2) < 5).toBe(true)
             done();
         }, endAfter + 10)
     });
